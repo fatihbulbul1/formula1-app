@@ -8,7 +8,7 @@ class MyWidget extends StatelessWidget {
     return Container(
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Text(
-        "03 - 05 KAS",
+        "17 - 19 KAS",
         style: TextStyle(color: Colors.white, fontSize: 20),
       ),
       SizedBox(
@@ -186,7 +186,7 @@ class MyWidget extends StatelessWidget {
         children: [
           SizedBox(height: 20),
           Text(
-            "Brazil Grand Prix Weekend".toUpperCase(),
+            "Las Vegas Grand Prix Weekend".toUpperCase(),
             style: TextStyle(
               color: Colors.white,
               letterSpacing: 0.5,

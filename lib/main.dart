@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:test/pages/racing.dart';
+import 'package:test/pages/standings.dart';
 import 'package:test/pages/test.dart';
 
 void main() {
@@ -36,13 +37,7 @@ TextStyle titleStyle() {
 class _HomeState extends State<Home> {
   int _currentIndex = 0;
 
-  final List<Widget> _pages = [
-    MyWidget(),
-    RacingPage(),
-    Center(
-      child: Text("Page 3 Content"),
-    ),
-  ];
+  final List<Widget> _pages = [MyWidget(), RacingPage(), StandingsPage()];
   final List<Text> _texts = [
     Text(
       "Home".toUpperCase(),
