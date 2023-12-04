@@ -1,10 +1,39 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
+import 'package:test/models/race.dart';
 
 class MyWidget extends StatelessWidget {
-  const MyWidget({super.key});
+  MyWidget({super.key});
+  Future getNextRace() async {
+    var response = await http.get(Uri.https("ergast.com", "api/f1/2023.json"));
+    var jsonData = jsonDecode(response.body);
+    var date = jsonData["MRData"]["RaceTable"]["Races"][0]["FirstPractice"]
+            ["date"]
+        .replaceFirst("2023", "2024");
+    var time =
+        jsonData["MRData"]["RaceTable"]["Races"][0]["FirstPractice"]["time"];
+    ;
+    DateTime now = DateTime.now();
+    DateTime targetDateTime =
+        DateFormat("yyyy-MM-dd HH:mm:ss").parse("$date $time");
+
+    Duration difference = targetDateTime.difference(now);
+
+    int days = difference.inDays;
+    int hours = difference.inHours - (days * 24);
+    int minutes = difference.inMinutes - (days * 24 * 60) - (hours * 60);
+    List remaining = [];
+    remaining.add(days);
+    remaining.add(hours);
+    remaining.add(minutes);
+    return remaining;
+  }
 
   @override
   Widget build(BuildContext context) {
+    getNextRace();
     return Container(
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Text(
@@ -14,7 +43,7 @@ class MyWidget extends StatelessWidget {
       SizedBox(
         height: 10,
       ),
-      TimerContainer(),
+      TimerContainer2(),
       SizedBox(
         height: 20,
       ),
@@ -169,6 +198,101 @@ class MyWidget extends StatelessWidget {
         )
       ]),
     );
+  }
+
+  FutureBuilder TimerContainer2() {
+    return FutureBuilder(
+        future: getNextRace(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return CircularProgressIndicator();
+          } else if (snapshot.hasError) {
+            return Text("Error: ${snapshot.error}");
+          } else {
+            return Container(
+              padding: EdgeInsets.fromLTRB(25, 0, 25, 0),
+              decoration: BoxDecoration(
+                  color: Color.fromARGB(255, 0, 100, 66),
+                  border: Border.all(
+                      style: BorderStyle.solid,
+                      color: Color.fromARGB(0, 255, 255, 255)),
+                  borderRadius: BorderRadius.circular(10)),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  SizedBox(height: 20),
+                  Text(
+                    "Las Vegas Grand Prix Weekend".toUpperCase(),
+                    style: TextStyle(
+                      color: Colors.white,
+                      letterSpacing: 0.5,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Divider(
+                    height: 15,
+                    color: Colors.black,
+                    thickness: 0.4,
+                  ),
+                  SizedBox(height: 15),
+                  IntrinsicHeight(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        Column(
+                          children: [
+                            Text(
+                              "${snapshot.data[0]}",
+                              style: numberTextStyle(),
+                            ),
+                            Text(
+                              "days".toUpperCase(),
+                              style: timeTextStyle(),
+                            )
+                          ],
+                        ),
+                        VerticalDivider(
+                          color: Colors.black,
+                        ),
+                        Column(
+                          children: [
+                            Text(
+                              "${snapshot.data[1]}",
+                              style: numberTextStyle(),
+                            ),
+                            Text(
+                              "hrs".toUpperCase(),
+                              style: timeTextStyle(),
+                            )
+                          ],
+                        ),
+                        VerticalDivider(
+                          color: Colors.black,
+                        ),
+                        Column(
+                          children: [
+                            Text(
+                              "${snapshot.data[2]}",
+                              style: numberTextStyle(),
+                            ),
+                            Text(
+                              "mins".toUpperCase(),
+                              style: timeTextStyle(),
+                            )
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: 20,
+                  )
+                ],
+              ),
+            );
+          }
+        });
   }
 
   Container TimerContainer() {
