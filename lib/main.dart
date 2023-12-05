@@ -1,12 +1,7 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:test/models/race.dart';
 import 'package:test/pages/racing.dart';
 import 'package:test/pages/standings.dart';
 import 'package:test/pages/test.dart';
-import 'package:http/http.dart' as http;
-import 'package:intl/intl.dart';
 
 void main() {
   runApp(const MyApp());

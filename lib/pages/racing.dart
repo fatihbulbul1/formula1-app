@@ -1,7 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 class RacingPage extends StatefulWidget {
-  const RacingPage({super.key});
+  RacingPage({super.key});
 
   @override
   State<RacingPage> createState() => _RacingPageState();
@@ -9,7 +13,73 @@ class RacingPage extends StatefulWidget {
 
 class _RacingPageState extends State<RacingPage> {
   int _currentPage = 0;
+  List races = [];
+  bool isLoading = false;
+  final List months = [
+    "-",
+    "-",
+    "FEB",
+    "MAR",
+    "APR",
+    "MAY",
+    "JUN",
+    "JUL",
+    "AUG",
+    "SEP",
+    "OCT",
+    "NOV",
+    "DEC"
+  ];
   @override
+  void initState() {
+    super.initState();
+    getRaces();
+  }
+
+  Future getRaces() async {
+    print("giris");
+    setState(() {
+      isLoading = true;
+    });
+    var response =
+        await http.get(Uri.https("ergast.com", "api/f1/2023/results/1.json"));
+    var jsonData = jsonDecode(response.body);
+    List localRaces = [];
+    for (var i = 0; i < 22; i++) {
+      var raceName = jsonData["MRData"]["RaceTable"]["Races"][i]["raceName"];
+      var round = jsonData["MRData"]["RaceTable"]["Races"][i]["round"];
+      var date = jsonData["MRData"]["RaceTable"]["Races"][i]["date"];
+      var winnerName = jsonData["MRData"]["RaceTable"]["Races"][i]["Results"][0]
+          ["Driver"]["givenName"];
+      var winnerSrame = jsonData["MRData"]["RaceTable"]["Races"][i]["Results"]
+          [0]["Driver"]["familyName"];
+      var constructor = jsonData["MRData"]["RaceTable"]["Races"][i]["Results"]
+          [0]["Constructor"]["name"];
+      date = date.split("-");
+      var month = months[int.parse(date[1])];
+      var day = int.parse(date[2]);
+      String dayStr;
+      if (day < 10)
+        dayStr = "0" + day.toString();
+      else
+        dayStr = day.toString();
+
+      localRaces.add([
+        raceName,
+        round,
+        dayStr,
+        month,
+        "$winnerName $winnerSrame",
+        constructor
+      ]);
+    }
+    setState(() {
+      races = localRaces;
+      isLoading = false;
+    });
+    print(races);
+  }
+
   Widget build(BuildContext context) {
     return Container(
       child: Column(children: [
@@ -17,7 +87,7 @@ class _RacingPageState extends State<RacingPage> {
         SizedBox(
           height: 20,
         ),
-        _currentPage == 0 ? upcomingContainer() : pastContainer()
+        _currentPage == 0 ? upcomingContainer() : pastContainerListTile()
       ]),
     );
   }
@@ -31,26 +101,7 @@ class _RacingPageState extends State<RacingPage> {
           color: const Color.fromARGB(255, 46, 46, 46)),
       child: IntrinsicHeight(
         child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-          Container(
-            child:
-                Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-              Text(
-                "17 - 19",
-                style:
-                    TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(
-                height: 8,
-              ),
-              Container(
-                decoration: monthDecoration(),
-                padding: EdgeInsets.all(5),
-                child: Text(
-                  "Oct",
-                ),
-              )
-            ]),
-          ),
+          raceContainer(),
           VerticalDivider(
             color: Colors.white,
             width: 50,
@@ -86,6 +137,77 @@ class _RacingPageState extends State<RacingPage> {
     );
   }
 
+  Column raceContainer() {
+    return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+      Text(
+        "17 - 19",
+        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+      ),
+      SizedBox(
+        height: 8,
+      ),
+      Container(
+        decoration: monthDecoration(),
+        padding: EdgeInsets.all(5),
+        child: Text(
+          "Oct",
+        ),
+      )
+    ]);
+  }
+
+  Column raceContainer1(state) {
+    return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+      Text(
+        state[2],
+        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+      ),
+      SizedBox(
+        height: 8,
+      ),
+      Container(
+        decoration: monthDecoration(),
+        padding: EdgeInsets.all(5),
+        child: Text(
+          "Oct",
+        ),
+      )
+    ]);
+  }
+
+  FutureBuilder pastContainer1() {
+    return FutureBuilder(
+        future: getRaces(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            return ListView.builder(itemBuilder: (context, index) {
+              return raceContainer1(races[index]);
+            });
+          } else {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+        });
+  }
+
+  Widget pastContainerListTile() {
+    return Expanded(
+      child: ListView.builder(
+        itemCount: races.length,
+        itemBuilder: (context, index) {
+          return Column(
+            children: [
+              race__(races[
+                  index]), // Make sure this function is implemented correctly
+              SizedBox(height: 20),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
   Container pastContainer() {
     return Container(
       padding: EdgeInsets.all(20),
@@ -95,15 +217,29 @@ class _RacingPageState extends State<RacingPage> {
           color: const Color.fromARGB(255, 46, 46, 46)),
       child: Column(
         children: [
-          IntrinsicHeight(
-            child:
-                Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+          race__("hi"),
+        ],
+      ),
+    );
+  }
+
+  IntrinsicHeight race__(state) {
+    return IntrinsicHeight(
+      child: Container(
+        padding: EdgeInsets.all(20),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: const Color.fromARGB(255, 46, 46, 46)),
+            color: const Color.fromARGB(255, 46, 46, 46)),
+        child: Column(
+          children: [
+            Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
               Container(
                 child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        "03 - 05",
+                        state[2],
                         style: TextStyle(
                             color: Colors.white, fontWeight: FontWeight.bold),
                       ),
@@ -114,7 +250,7 @@ class _RacingPageState extends State<RacingPage> {
                         decoration: monthDecoration(),
                         padding: EdgeInsets.all(5),
                         child: Text(
-                          "Oct",
+                          state[3],
                         ),
                       )
                     ]),
@@ -127,7 +263,7 @@ class _RacingPageState extends State<RacingPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Round 19",
+                    "Round " + state[1],
                     style: TextStyle(
                         color: const Color.fromARGB(255, 211, 211, 211)),
                   ),
@@ -143,27 +279,27 @@ class _RacingPageState extends State<RacingPage> {
                     height: 10,
                   ),
                   Text(
-                    "Formula 1 Brazil GP",
+                    state[0],
                     style: TextStyle(
                         color: const Color.fromARGB(255, 211, 211, 211)),
                   )
                 ],
               )
             ]),
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          TextButton(
-              style: ButtonStyle(
-                backgroundColor: MaterialStatePropertyAll(Colors.white),
-              ),
-              onPressed: () {},
-              child: Text(
-                "See results",
-                style: TextStyle(color: Colors.black),
-              ))
-        ],
+            SizedBox(
+              height: 10,
+            ),
+            TextButton(
+                style: ButtonStyle(
+                  backgroundColor: MaterialStatePropertyAll(Colors.white),
+                ),
+                onPressed: () {},
+                child: Text(
+                  "See results",
+                  style: TextStyle(color: Colors.black),
+                ))
+          ],
+        ),
       ),
     );
   }

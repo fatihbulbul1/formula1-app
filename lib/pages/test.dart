@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
-import 'package:test/models/race.dart';
 
 class MyWidget extends StatelessWidget {
   MyWidget({super.key});
-  List months = [
+  final List months = [
     "-",
     "-",
     "FEB",
