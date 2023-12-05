@@ -6,15 +6,34 @@ import 'package:test/models/race.dart';
 
 class MyWidget extends StatelessWidget {
   MyWidget({super.key});
+  List months = [
+    "-",
+    "-",
+    "FEB",
+    "MAR",
+    "APR",
+    "MAY",
+    "JUN",
+    "JUL",
+    "AUG",
+    "SEP",
+    "OCT",
+    "NOV",
+    "DEC"
+  ];
   Future getNextRace() async {
     var response = await http.get(Uri.https("ergast.com", "api/f1/2023.json"));
     var jsonData = jsonDecode(response.body);
-    var date = jsonData["MRData"]["RaceTable"]["Races"][0]["FirstPractice"]
-            ["date"]
+    var date = jsonData["MRData"]["RaceTable"]["Races"][0]["date"]
         .replaceFirst("2023", "2024");
-    var time =
-        jsonData["MRData"]["RaceTable"]["Races"][0]["FirstPractice"]["time"];
+    var time = jsonData["MRData"]["RaceTable"]["Races"][0]["time"];
     ;
+    var round = jsonData["MRData"]["RaceTable"]["Races"][0]["round"];
+    var raceName = jsonData["MRData"]["RaceTable"]["Races"][0]["raceName"];
+    String strDate = jsonData["MRData"]["RaceTable"]["Races"][0]["date"]
+        .replaceFirst("2023", "2024");
+    var raceDay = strDate.split("-");
+
     DateTime now = DateTime.now();
     DateTime targetDateTime =
         DateFormat("yyyy-MM-dd HH:mm:ss").parse("$date $time");
@@ -24,10 +43,33 @@ class MyWidget extends StatelessWidget {
     int days = difference.inDays;
     int hours = difference.inHours - (days * 24);
     int minutes = difference.inMinutes - (days * 24 * 60) - (hours * 60);
+
+    String strDays = days.toString();
+    String strHours = hours.toString();
+    String strMinutes = minutes.toString();
+
+    if (days < 10) {
+      strDays = "0" + strDays;
+    }
+    if (hours < 10) {
+      strHours = "0" + strHours;
+    }
+    if (minutes < 10) {
+      strMinutes = "0" + strMinutes;
+    }
     List remaining = [];
-    remaining.add(days);
-    remaining.add(hours);
-    remaining.add(minutes);
+    remaining.add(strDays);
+    remaining.add(strHours);
+    remaining.add(strMinutes);
+    remaining.add(raceName);
+    remaining.add("Round " +
+        round +
+        " | " +
+        raceDay[2] +
+        " " +
+        months[int.parse(raceDay[1])] +
+        " " +
+        raceDay[0]);
     return remaining;
   }
 
@@ -36,14 +78,9 @@ class MyWidget extends StatelessWidget {
     getNextRace();
     return Container(
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text(
-        "17 - 19 KAS",
-        style: TextStyle(color: Colors.white, fontSize: 20),
-      ),
-      SizedBox(
-        height: 10,
-      ),
-      TimerContainer2(),
+      // RaceNameContainer(),
+      // TimerContainer2(),
+      Top(),
       SizedBox(
         height: 20,
       ),
@@ -67,19 +104,6 @@ class MyWidget extends StatelessWidget {
           ],
         ),
       )
-      // Container(
-      //     height: 45,
-      //     decoration: BoxDecoration(
-      //         border: Border.all(color: Colors.white),
-      //         borderRadius: BorderRadius.all(Radius.circular(10))
-      //         // border: Border(
-      //         //     top: BorderSide(color: Colors.white),
-      //         //     right: BorderSide(color: Colors.white),
-      //         //     left: BorderSide(color: Color.fromARGB(0, 255, 255, 255)),
-      //         //     bottom: BorderSide(color: Color.fromARGB(0, 255, 255, 255))),
-      //         //borderRadius: BorderRadius.circular(10)
-      //         //borderRadius: BorderRadius.only(topRight: Radius.circular(1))
-      //         ))
     ]));
   }
 
@@ -163,44 +187,7 @@ class MyWidget extends StatelessWidget {
     );
   }
 
-  Container oldContainer() {
-    return Container(
-      child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        Container(
-          decoration: BoxDecoration(
-              border: Border.all(color: Colors.white),
-              borderRadius: BorderRadius.circular(4)),
-          child: Image(
-            image: AssetImage("assets/images/img.png"),
-            height: 50,
-            fit: BoxFit.fill,
-          ),
-        ),
-        Container(
-          child: Column(children: [
-            Text(
-              "Formula 1",
-              style:
-                  TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(
-              height: 15,
-            ),
-            Text(
-              "IT’S RACE WEEK IN VEGAS!!!",
-              style: TextStyle(color: Colors.white),
-            ),
-            Image(
-              image: AssetImage("assets/images/img2.png"),
-              width: 200,
-            )
-          ]),
-        )
-      ]),
-    );
-  }
-
-  FutureBuilder TimerContainer2() {
+  FutureBuilder Top() {
     return FutureBuilder(
         future: getNextRace(),
         builder: (context, snapshot) {
@@ -209,175 +196,106 @@ class MyWidget extends StatelessWidget {
           } else if (snapshot.hasError) {
             return Text("Error: ${snapshot.error}");
           } else {
-            return Container(
-              padding: EdgeInsets.fromLTRB(25, 0, 25, 0),
-              decoration: BoxDecoration(
-                  color: Color.fromARGB(255, 0, 100, 66),
-                  border: Border.all(
-                      style: BorderStyle.solid,
-                      color: Color.fromARGB(0, 255, 255, 255)),
-                  borderRadius: BorderRadius.circular(10)),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  SizedBox(height: 20),
-                  Text(
-                    "Las Vegas Grand Prix Weekend".toUpperCase(),
-                    style: TextStyle(
-                      color: Colors.white,
-                      letterSpacing: 0.5,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Divider(
-                    height: 15,
-                    color: Colors.black,
-                    thickness: 0.4,
-                  ),
-                  SizedBox(height: 15),
-                  IntrinsicHeight(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Column(
-                          children: [
-                            Text(
-                              "${snapshot.data[0]}",
-                              style: numberTextStyle(),
-                            ),
-                            Text(
-                              "days".toUpperCase(),
-                              style: timeTextStyle(),
-                            )
-                          ],
-                        ),
-                        VerticalDivider(
-                          color: Colors.black,
-                        ),
-                        Column(
-                          children: [
-                            Text(
-                              "${snapshot.data[1]}",
-                              style: numberTextStyle(),
-                            ),
-                            Text(
-                              "hrs".toUpperCase(),
-                              style: timeTextStyle(),
-                            )
-                          ],
-                        ),
-                        VerticalDivider(
-                          color: Colors.black,
-                        ),
-                        Column(
-                          children: [
-                            Text(
-                              "${snapshot.data[2]}",
-                              style: numberTextStyle(),
-                            ),
-                            Text(
-                              "mins".toUpperCase(),
-                              style: timeTextStyle(),
-                            )
-                          ],
-                        )
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    height: 20,
-                  )
-                ],
-              ),
-            );
-          }
-        });
-  }
-
-  Container TimerContainer() {
-    return Container(
-      padding: EdgeInsets.fromLTRB(25, 0, 25, 0),
-      decoration: BoxDecoration(
-          color: Color.fromARGB(255, 0, 100, 66),
-          border: Border.all(
-              style: BorderStyle.solid,
-              color: Color.fromARGB(0, 255, 255, 255)),
-          borderRadius: BorderRadius.circular(10)),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          SizedBox(height: 20),
-          Text(
-            "Las Vegas Grand Prix Weekend".toUpperCase(),
-            style: TextStyle(
-              color: Colors.white,
-              letterSpacing: 0.5,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          Divider(
-            height: 15,
-            color: Colors.black,
-            thickness: 0.4,
-          ),
-          SizedBox(height: 15),
-          IntrinsicHeight(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Column(
                   children: [
                     Text(
-                      "01",
-                      style: numberTextStyle(),
+                      "${snapshot.data[4]}",
+                      style: TextStyle(color: Colors.white, fontSize: 20),
                     ),
-                    Text(
-                      "days".toUpperCase(),
-                      style: timeTextStyle(),
-                    )
+                    SizedBox(
+                      height: 10,
+                    ),
                   ],
                 ),
-                VerticalDivider(
-                  color: Colors.black,
-                ),
-                Column(
-                  children: [
-                    Text(
-                      "03",
-                      style: numberTextStyle(),
-                    ),
-                    Text(
-                      "hrs".toUpperCase(),
-                      style: timeTextStyle(),
-                    )
-                  ],
-                ),
-                VerticalDivider(
-                  color: Colors.black,
-                ),
-                Column(
-                  children: [
-                    Text(
-                      "59",
-                      style: numberTextStyle(),
-                    ),
-                    Text(
-                      "mins".toUpperCase(),
-                      style: timeTextStyle(),
-                    )
-                  ],
+                Container(
+                  padding: EdgeInsets.fromLTRB(25, 0, 25, 0),
+                  decoration: BoxDecoration(
+                      color: Color.fromARGB(255, 0, 100, 66),
+                      border: Border.all(
+                          style: BorderStyle.solid,
+                          color: Color.fromARGB(0, 255, 255, 255)),
+                      borderRadius: BorderRadius.circular(10)),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      SizedBox(height: 20),
+                      Text(
+                        "${snapshot.data[3]}".toUpperCase(),
+                        style: TextStyle(
+                          color: Colors.white,
+                          letterSpacing: 0.5,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Divider(
+                        height: 15,
+                        color: Colors.black,
+                        thickness: 0.4,
+                      ),
+                      SizedBox(height: 15),
+                      IntrinsicHeight(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Column(
+                              children: [
+                                Text(
+                                  "${snapshot.data[0]}",
+                                  style: numberTextStyle(),
+                                ),
+                                Text(
+                                  "days".toUpperCase(),
+                                  style: timeTextStyle(),
+                                )
+                              ],
+                            ),
+                            VerticalDivider(
+                              color: Colors.black,
+                            ),
+                            Column(
+                              children: [
+                                Text(
+                                  "${snapshot.data[1]}",
+                                  style: numberTextStyle(),
+                                ),
+                                Text(
+                                  "hrs".toUpperCase(),
+                                  style: timeTextStyle(),
+                                )
+                              ],
+                            ),
+                            VerticalDivider(
+                              color: Colors.black,
+                            ),
+                            Column(
+                              children: [
+                                Text(
+                                  "${snapshot.data[2]}",
+                                  style: numberTextStyle(),
+                                ),
+                                Text(
+                                  "mins".toUpperCase(),
+                                  style: timeTextStyle(),
+                                )
+                              ],
+                            )
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: 20,
+                      )
+                    ],
+                  ),
                 )
               ],
-            ),
-          ),
-          SizedBox(
-            height: 20,
-          )
-        ],
-      ),
-    );
+            );
+          }
+        });
   }
 
   TextStyle timeTextStyle() => TextStyle(color: Colors.white, fontSize: 13);
@@ -387,16 +305,3 @@ class MyWidget extends StatelessWidget {
         color: Colors.white, fontSize: 33, fontWeight: FontWeight.bold);
   }
 }
-// const Column(
-//         crossAxisAlignment: CrossAxisAlignment.start,
-//         children: [
-//           Text(
-//             "Sayfa1",
-//             style: TextStyle(color: Colors.white),
-//           ),
-//           Row(
-//             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-//             children: 
-//             [Text("data1"), Text("data2"), Text("dat3a")],
-//           ),
-//         ]);
