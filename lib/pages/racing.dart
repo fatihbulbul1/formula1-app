@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:test/models/race_.dart';
+import 'package:test/models/race_model.dart';
 import 'package:test/models/race_api.dart';
 import 'package:test/widgets/past_race.dart';
 
@@ -44,11 +44,9 @@ class _RacingPageState extends State<RacingPage> {
     setState(() {
       isLoading = false;
     });
-    print(_races);
   }
 
   Future getRaces() async {
-    print("giris");
     setState(() {
       isLoading = true;
     });
@@ -88,7 +86,6 @@ class _RacingPageState extends State<RacingPage> {
       races = localRaces;
       isLoading = false;
     });
-    print(races);
   }
 
   Widget build(BuildContext context) {

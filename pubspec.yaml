@@ -77,8 +77,8 @@ flutter:
   assets:
     - assets/images/img.png
     - assets/images/img2.png
-    - assets/images/verstappen.png
-    - assets/images/red_bull.png
+    - assets/images/drivers/
+    - assets/images/teams/
   fonts:
     - family: Formula1
       fonts:
