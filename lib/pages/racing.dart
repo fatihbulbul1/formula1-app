@@ -9,7 +9,7 @@ import 'package:test/widgets/past_race.dart';
 import 'package:test/widgets/upcoming_race.dart';
 
 class RacingPage extends StatefulWidget {
-  RacingPage({super.key});
+  const RacingPage({super.key});
 
   @override
   State<RacingPage> createState() => _RacingPageState();
@@ -18,8 +18,8 @@ class RacingPage extends StatefulWidget {
 class _RacingPageState extends State<RacingPage> {
   int _currentPage = 0;
   List races = [];
-  late List<Race> pastRaces;
-  late List<URace> upcomingRaces;
+  List<Race> pastRaces = [];
+  List<URace> upcomingRaces = [];
   bool isLoadingU = true;
   bool isLoadingP = true;
   final List months = [
@@ -81,10 +81,11 @@ class _RacingPageState extends State<RacingPage> {
       var month = months[int.parse(date[1])];
       var day = int.parse(date[2]);
       String dayStr;
-      if (day < 10)
-        dayStr = "0" + day.toString();
-      else
+      if (day < 10) {
+        dayStr = "0$day";
+      } else {
         dayStr = day.toString();
+      }
 
       localRaces.add([
         raceName,
@@ -101,21 +102,22 @@ class _RacingPageState extends State<RacingPage> {
     });
   }
 
+  @override
   Widget build(BuildContext context) {
     return Container(
       child: Column(children: [
         selectButtons(),
-        SizedBox(
+        const SizedBox(
           height: 20,
         ),
         _currentPage == 0
             ? (isLoadingU
-                ? Center(child: CircularProgressIndicator())
+                ? const Center(child: CircularProgressIndicator())
                 : Expanded(
                     child: ListView.builder(
                         scrollDirection: Axis.vertical,
                         shrinkWrap: true,
-                        itemCount: pastRaces.length,
+                        itemCount: upcomingRaces.length,
                         itemBuilder: (context, index) {
                           return Column(
                             children: [
@@ -125,13 +127,13 @@ class _RacingPageState extends State<RacingPage> {
                                   dayStr: upcomingRaces[index].dayStr,
                                   month: upcomingRaces[index].month,
                                   place: upcomingRaces[index].place),
-                              SizedBox(height: 15),
+                              const SizedBox(height: 15),
                             ],
                           );
                         }),
                   ))
             : (isLoadingP
-                ? Center(child: CircularProgressIndicator())
+                ? const Center(child: CircularProgressIndicator())
                 : Expanded(
                     child: ListView.builder(
                         scrollDirection: Axis.vertical,
@@ -149,7 +151,7 @@ class _RacingPageState extends State<RacingPage> {
                                   constructorName:
                                       pastRaces[index].constructorName,
                                   place: pastRaces[index].place),
-                              SizedBox(height: 15),
+                              const SizedBox(height: 15),
                             ],
                           );
                         }),
@@ -160,7 +162,7 @@ class _RacingPageState extends State<RacingPage> {
 
   Container upcomingContainer() {
     return Container(
-      padding: EdgeInsets.all(20),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
           border: Border.all(color: const Color.fromARGB(255, 46, 46, 46)),
@@ -168,17 +170,16 @@ class _RacingPageState extends State<RacingPage> {
       child: IntrinsicHeight(
         child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
           raceContainer(),
-          VerticalDivider(
+          const VerticalDivider(
             color: Colors.white,
             width: 50,
           ),
-          Column(
+          const Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 "Round 20",
-                style:
-                    TextStyle(color: const Color.fromARGB(255, 211, 211, 211)),
+                style: TextStyle(color: Color.fromARGB(255, 211, 211, 211)),
               ),
               SizedBox(
                 height: 10,
@@ -193,8 +194,7 @@ class _RacingPageState extends State<RacingPage> {
               ),
               Text(
                 "Formula 1 Las Vegas GP",
-                style:
-                    TextStyle(color: const Color.fromARGB(255, 211, 211, 211)),
+                style: TextStyle(color: Color.fromARGB(255, 211, 211, 211)),
               )
             ],
           )
@@ -205,17 +205,17 @@ class _RacingPageState extends State<RacingPage> {
 
   Column raceContainer() {
     return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-      Text(
+      const Text(
         "17 - 19",
         style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
       ),
-      SizedBox(
+      const SizedBox(
         height: 8,
       ),
       Container(
         decoration: monthDecoration(),
-        padding: EdgeInsets.all(5),
-        child: Text(
+        padding: const EdgeInsets.all(5),
+        child: const Text(
           "Oct",
         ),
       )
@@ -226,15 +226,16 @@ class _RacingPageState extends State<RacingPage> {
     return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
       Text(
         state[2],
-        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        style:
+            const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
       ),
-      SizedBox(
+      const SizedBox(
         height: 8,
       ),
       Container(
         decoration: monthDecoration(),
-        padding: EdgeInsets.all(5),
-        child: Text(
+        padding: const EdgeInsets.all(5),
+        child: const Text(
           "Oct",
         ),
       )
@@ -254,7 +255,7 @@ class _RacingPageState extends State<RacingPage> {
                   );
                 });
           } else {
-            return Center(
+            return const Center(
               child: CircularProgressIndicator(),
             );
           }
@@ -282,7 +283,7 @@ class _RacingPageState extends State<RacingPage> {
 
   Container pastContainer() {
     return Container(
-      padding: EdgeInsets.all(20),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
           border: Border.all(color: const Color.fromARGB(255, 46, 46, 46)),
@@ -298,7 +299,7 @@ class _RacingPageState extends State<RacingPage> {
   IntrinsicHeight race__(state) {
     return IntrinsicHeight(
       child: Container(
-        padding: EdgeInsets.all(20),
+        padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
             border: Border.all(color: const Color.fromARGB(255, 46, 46, 46)),
@@ -312,22 +313,22 @@ class _RacingPageState extends State<RacingPage> {
                     children: [
                       Text(
                         state[2],
-                        style: TextStyle(
+                        style: const TextStyle(
                             color: Colors.white, fontWeight: FontWeight.bold),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 8,
                       ),
                       Container(
                         decoration: monthDecoration(),
-                        padding: EdgeInsets.all(5),
+                        padding: const EdgeInsets.all(5),
                         child: Text(
                           state[3],
                         ),
                       )
                     ]),
               ),
-              VerticalDivider(
+              const VerticalDivider(
                 color: Colors.white,
                 width: 50,
               ),
@@ -336,37 +337,37 @@ class _RacingPageState extends State<RacingPage> {
                 children: [
                   Text(
                     "Round " + state[1],
-                    style: TextStyle(
-                        color: const Color.fromARGB(255, 211, 211, 211)),
+                    style: const TextStyle(
+                        color: Color.fromARGB(255, 211, 211, 211)),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
-                  Text(
+                  const Text(
                     "Brazil",
                     style: TextStyle(
                         color: Colors.white, fontWeight: FontWeight.bold),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
                   Text(
                     state[0],
-                    style: TextStyle(
-                        color: const Color.fromARGB(255, 211, 211, 211)),
+                    style: const TextStyle(
+                        color: Color.fromARGB(255, 211, 211, 211)),
                   )
                 ],
               )
             ]),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             TextButton(
-                style: ButtonStyle(
+                style: const ButtonStyle(
                   backgroundColor: MaterialStatePropertyAll(Colors.white),
                 ),
                 onPressed: () {},
-                child: Text(
+                child: const Text(
                   "See results",
                   style: TextStyle(color: Colors.black),
                 ))
@@ -390,7 +391,7 @@ class _RacingPageState extends State<RacingPage> {
         TextButton(
             style: ButtonStyle(
                 backgroundColor: _currentPage == 0
-                    ? MaterialStatePropertyAll(Colors.blueGrey)
+                    ? const MaterialStatePropertyAll(Colors.blueGrey)
                     : null),
             onPressed: () {
               setState(() {
@@ -404,7 +405,7 @@ class _RacingPageState extends State<RacingPage> {
         TextButton(
             style: ButtonStyle(
                 backgroundColor: _currentPage == 1
-                    ? MaterialStatePropertyAll(Colors.blueGrey)
+                    ? const MaterialStatePropertyAll(Colors.blueGrey)
                     : null),
             onPressed: () {
               setState(() {

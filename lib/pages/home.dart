@@ -16,7 +16,7 @@ class HomePage extends StatelessWidget {
 
   Container _searchField() {
     return Container(
-      margin: EdgeInsets.only(top: 40, left: 20, right: 20),
+      margin: const EdgeInsets.only(top: 40, left: 20, right: 20),
       decoration: BoxDecoration(boxShadow: [
         BoxShadow(
             color: Colors.black87.withOpacity(0.11),
@@ -44,7 +44,7 @@ class HomePage extends StatelessWidget {
       centerTitle: true,
       elevation: 0,
       leading: Container(
-        margin: EdgeInsets.all(10),
+        margin: const EdgeInsets.all(10),
         alignment: Alignment.center,
         decoration: BoxDecoration(
           color: Colors.white,

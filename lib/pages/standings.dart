@@ -40,6 +40,7 @@ class _StandingsPageState extends State<StandingsPage> {
     print(constructors);
   }
 
+  @override
   Widget build(BuildContext context) {
     return Column(
       children: [
@@ -49,7 +50,7 @@ class _StandingsPageState extends State<StandingsPage> {
         ),
         _currentPage == 0
             ? (disLoading
-                ? Center(child: CircularProgressIndicator())
+                ? const Center(child: CircularProgressIndicator())
                 : Expanded(
                     child: ListView.builder(
                         scrollDirection: Axis.vertical,
@@ -67,13 +68,13 @@ class _StandingsPageState extends State<StandingsPage> {
                                 surname: drivers[index].surname,
                                 constructorName: drivers[index].constructorName,
                               ),
-                              SizedBox(height: 15),
+                              const SizedBox(height: 15),
                             ],
                           );
                         }),
                   ))
             : (cisLoading
-                ? Center(child: CircularProgressIndicator())
+                ? const Center(child: CircularProgressIndicator())
                 : Expanded(
                     child: ListView.builder(
                         scrollDirection: Axis.vertical,
@@ -88,7 +89,7 @@ class _StandingsPageState extends State<StandingsPage> {
                                 wins: constructors[idx].wins,
                                 name: constructors[idx].name,
                               ),
-                              SizedBox(height: 15),
+                              const SizedBox(height: 15),
                             ],
                           );
                         }),
@@ -116,10 +117,10 @@ class _StandingsPageState extends State<StandingsPage> {
   Container constructorContainer() {
     return Container(
       decoration: BoxDecoration(
-          color: Color.fromARGB(255, 46, 46, 46),
-          border: Border.all(color: Color.fromARGB(255, 46, 46, 46)),
+          color: const Color.fromARGB(255, 46, 46, 46),
+          border: Border.all(color: const Color.fromARGB(255, 46, 46, 46)),
           borderRadius: BorderRadius.circular(20)),
-      child: Padding(
+      child: const Padding(
         padding: EdgeInsets.fromLTRB(15, 20, 15, 20),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -179,11 +180,11 @@ class _StandingsPageState extends State<StandingsPage> {
   Container driverContainer() {
     return Container(
       decoration: BoxDecoration(
-          color: Color.fromARGB(255, 46, 46, 46),
-          border: Border.all(color: Color.fromARGB(255, 46, 46, 46)),
+          color: const Color.fromARGB(255, 46, 46, 46),
+          border: Border.all(color: const Color.fromARGB(255, 46, 46, 46)),
           borderRadius: BorderRadius.circular(20)),
       child: Padding(
-        padding: EdgeInsets.fromLTRB(15, 20, 15, 20),
+        padding: const EdgeInsets.fromLTRB(15, 20, 15, 20),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -191,34 +192,34 @@ class _StandingsPageState extends State<StandingsPage> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                const Text(
                   "1",
                   style: TextStyle(color: Colors.white, fontSize: 30),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
-                Text(
+                const Text(
                   "Max",
                   style: TextStyle(color: Colors.white),
                 ),
                 Text(
                   "Verstappen".toUpperCase(),
-                  style: TextStyle(
+                  style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
                       fontSize: 20),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
-                Text(
+                const Text(
                   "Red Bull Racing",
                   style: TextStyle(color: Colors.white, fontSize: 12),
                 )
               ],
             ),
-            Column(
+            const Column(
               children: [
                 Image(
                   image: AssetImage("assets/images/verstappen.png"),

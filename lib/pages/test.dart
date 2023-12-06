@@ -26,7 +26,6 @@ class MyWidget extends StatelessWidget {
     var date = jsonData["MRData"]["RaceTable"]["Races"][0]["date"]
         .replaceFirst("2019", "2024");
     var time = jsonData["MRData"]["RaceTable"]["Races"][0]["time"];
-    ;
     var round = jsonData["MRData"]["RaceTable"]["Races"][0]["round"];
     var raceName = jsonData["MRData"]["RaceTable"]["Races"][0]["raceName"];
     String strDate = jsonData["MRData"]["RaceTable"]["Races"][0]["date"]
@@ -48,27 +47,22 @@ class MyWidget extends StatelessWidget {
     String strMinutes = minutes.toString();
 
     if (days < 10) {
-      strDays = "0" + strDays;
+      strDays = "0$strDays";
     }
     if (hours < 10) {
-      strHours = "0" + strHours;
+      strHours = "0$strHours";
     }
     if (minutes < 10) {
-      strMinutes = "0" + strMinutes;
+      strMinutes = "0$strMinutes";
     }
     List remaining = [];
     remaining.add(strDays);
     remaining.add(strHours);
     remaining.add(strMinutes);
     remaining.add(raceName);
-    remaining.add("Round " +
-        round +
-        " | " +
-        raceDay[2] +
-        " " +
-        months[int.parse(raceDay[1])] +
-        " " +
-        raceDay[0]);
+    remaining.add("${"${"Round " +
+        round} | ${raceDay[2]} " +
+        months[int.parse(raceDay[1])]} ${raceDay[0]}");
     return remaining;
   }
 
@@ -80,17 +74,17 @@ class MyWidget extends StatelessWidget {
       // RaceNameContainer(),
       // TimerContainer2(),
       Top(),
-      SizedBox(
+      const SizedBox(
         height: 20,
       ),
       Text(
         "Latest News".toUpperCase(),
-        style: TextStyle(color: Colors.white, fontSize: 20),
+        style: const TextStyle(color: Colors.white, fontSize: 20),
       ),
-      SizedBox(
+      const SizedBox(
         height: 10,
       ),
-      Divider(
+      const Divider(
         height: 0,
         color: Colors.white,
         thickness: 1,
@@ -109,8 +103,8 @@ class MyWidget extends StatelessWidget {
   Container tweetContainer() {
     return Container(
       decoration: BoxDecoration(
-          color: Color.fromARGB(255, 56, 56, 56),
-          border: Border.all(color: Color.fromARGB(255, 56, 56, 56)),
+          color: const Color.fromARGB(255, 56, 56, 56),
+          border: Border.all(color: const Color.fromARGB(255, 56, 56, 56)),
           borderRadius: BorderRadius.circular(10)),
       child: Padding(
         padding: const EdgeInsets.all(15.0),
@@ -120,17 +114,17 @@ class MyWidget extends StatelessWidget {
               Row(
                 children: [
                   twitPicture(),
-                  SizedBox(
+                  const SizedBox(
                     width: 15,
                   ),
                   twitHeader(),
                 ],
               ),
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
               Container(
-                child: Column(children: [
+                child: const Column(children: [
                   Image(
                     image: AssetImage("assets/images/img2.png"),
                     width: 200,
@@ -144,7 +138,7 @@ class MyWidget extends StatelessWidget {
 
   Container twitHeader() {
     return Container(
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      child: const Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -178,7 +172,7 @@ class MyWidget extends StatelessWidget {
       decoration: BoxDecoration(
           border: Border.all(color: Colors.white),
           borderRadius: BorderRadius.circular(4)),
-      child: Image(
+      child: const Image(
         image: AssetImage("assets/images/img.png"),
         height: 50,
         fit: BoxFit.fill,
@@ -191,7 +185,7 @@ class MyWidget extends StatelessWidget {
         future: getNextRace(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return CircularProgressIndicator();
+            return const CircularProgressIndicator();
           } else if (snapshot.hasError) {
             return Text("Error: ${snapshot.error}");
           } else {
@@ -202,40 +196,40 @@ class MyWidget extends StatelessWidget {
                   children: [
                     Text(
                       "${snapshot.data[4]}",
-                      style: TextStyle(color: Colors.white, fontSize: 20),
+                      style: const TextStyle(color: Colors.white, fontSize: 20),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
                   ],
                 ),
                 Container(
-                  padding: EdgeInsets.fromLTRB(25, 0, 25, 0),
+                  padding: const EdgeInsets.fromLTRB(25, 0, 25, 0),
                   decoration: BoxDecoration(
-                      color: Color.fromARGB(255, 0, 100, 66),
+                      color: const Color.fromARGB(255, 0, 100, 66),
                       border: Border.all(
                           style: BorderStyle.solid,
-                          color: Color.fromARGB(0, 255, 255, 255)),
+                          color: const Color.fromARGB(0, 255, 255, 255)),
                       borderRadius: BorderRadius.circular(10)),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
                       Text(
                         "${snapshot.data[3]}".toUpperCase(),
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.white,
                           letterSpacing: 0.5,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      Divider(
+                      const Divider(
                         height: 15,
                         color: Colors.black,
                         thickness: 0.4,
                       ),
-                      SizedBox(height: 15),
+                      const SizedBox(height: 15),
                       IntrinsicHeight(
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -252,7 +246,7 @@ class MyWidget extends StatelessWidget {
                                 )
                               ],
                             ),
-                            VerticalDivider(
+                            const VerticalDivider(
                               color: Colors.black,
                             ),
                             Column(
@@ -267,7 +261,7 @@ class MyWidget extends StatelessWidget {
                                 )
                               ],
                             ),
-                            VerticalDivider(
+                            const VerticalDivider(
                               color: Colors.black,
                             ),
                             Column(
@@ -285,7 +279,7 @@ class MyWidget extends StatelessWidget {
                           ],
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 20,
                       )
                     ],
@@ -297,10 +291,10 @@ class MyWidget extends StatelessWidget {
         });
   }
 
-  TextStyle timeTextStyle() => TextStyle(color: Colors.white, fontSize: 13);
+  TextStyle timeTextStyle() => const TextStyle(color: Colors.white, fontSize: 13);
 
   TextStyle numberTextStyle() {
-    return TextStyle(
+    return const TextStyle(
         color: Colors.white, fontSize: 33, fontWeight: FontWeight.bold);
   }
 }

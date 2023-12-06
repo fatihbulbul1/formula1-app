@@ -16,9 +16,9 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
             fontFamily: "Formula1",
             // scaffoldBackgroundColor: Color.fromARGB(255, 35, 37, 39)
-            scaffoldBackgroundColor: Color.fromARGB(255, 27, 27, 27)),
+            scaffoldBackgroundColor: const Color.fromARGB(255, 27, 27, 27)),
         debugShowCheckedModeBanner: false,
-        home: Home());
+        home: const Home());
   }
 }
 
@@ -30,13 +30,13 @@ class Home extends StatefulWidget {
 }
 
 TextStyle titleStyle() {
-  return TextStyle(fontSize: 22.0, fontWeight: FontWeight.bold);
+  return const TextStyle(fontSize: 22.0, fontWeight: FontWeight.bold);
 }
 
 class _HomeState extends State<Home> {
   int _currentIndex = 0;
 
-  final List<Widget> _pages = [MyWidget(), RacingPage(), StandingsPage()];
+  final List<Widget> _pages = [MyWidget(), const RacingPage(), const StandingsPage()];
   final List<Text> _texts = [
     Text(
       "Home".toUpperCase(),
@@ -53,7 +53,7 @@ class _HomeState extends State<Home> {
         elevation: 0,
         titleSpacing: 25,
         title: _texts[_currentIndex],
-        backgroundColor: Color(0xFFEE0000),
+        backgroundColor: const Color(0xFFEE0000),
       ),
       body: Padding(
         padding: const EdgeInsets.fromLTRB(25, 30, 25, 0),
@@ -70,7 +70,7 @@ class _HomeState extends State<Home> {
               _currentIndex = index;
             });
           },
-          indicatorColor: Color.fromRGBO(238, 0, 0, 1.0),
+          indicatorColor: const Color.fromRGBO(238, 0, 0, 1.0),
           selectedIndex: _currentIndex,
           destinations: const <Widget>[
             NavigationDestination(
@@ -119,7 +119,7 @@ class _HomeState extends State<Home> {
           _currentIndex = index;
         });
       },
-      items: [
+      items: const [
         BottomNavigationBarItem(
           icon: Icon(Icons.home),
           label: 'Home',
