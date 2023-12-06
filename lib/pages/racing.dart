@@ -3,8 +3,10 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:test/models/race_model.dart';
-import 'package:test/models/race_api.dart';
+import 'package:test/models/upcoming_model.dart';
+import 'package:test/services/race_api.dart';
 import 'package:test/widgets/past_race.dart';
+import 'package:test/widgets/upcoming_race.dart';
 
 class RacingPage extends StatefulWidget {
   RacingPage({super.key});
@@ -16,8 +18,10 @@ class RacingPage extends StatefulWidget {
 class _RacingPageState extends State<RacingPage> {
   int _currentPage = 0;
   List races = [];
-  late List<Race> _races;
-  bool isLoading = true;
+  late List<Race> pastRaces;
+  late List<URace> upcomingRaces;
+  bool isLoadingU = true;
+  bool isLoadingP = true;
   final List months = [
     "-",
     "-",
@@ -36,19 +40,28 @@ class _RacingPageState extends State<RacingPage> {
   @override
   void initState() {
     super.initState();
-    getRaces2();
+    getPastRaces();
+    getUpcomingRaces();
   }
 
-  Future getRaces2() async {
-    _races = await RaceApi.getRace();
+  Future getPastRaces() async {
+    pastRaces = await RaceApi.getRace();
     setState(() {
-      isLoading = false;
+      isLoadingP = false;
     });
+  }
+
+  Future getUpcomingRaces() async {
+    upcomingRaces = await RaceApi.getUpcomingRaces();
+    setState(() {
+      isLoadingU = false;
+    });
+    print(upcomingRaces);
   }
 
   Future getRaces() async {
     setState(() {
-      isLoading = true;
+      isLoadingP = true;
     });
     var response =
         await http.get(Uri.https("ergast.com", "api/f1/2023/results/1.json"));
@@ -84,7 +97,7 @@ class _RacingPageState extends State<RacingPage> {
     }
     setState(() {
       races = localRaces;
-      isLoading = false;
+      isLoadingP = false;
     });
   }
 
@@ -96,31 +109,51 @@ class _RacingPageState extends State<RacingPage> {
           height: 20,
         ),
         _currentPage == 0
-            ? upcomingContainer()
-            : isLoading
+            ? (isLoadingU
                 ? Center(child: CircularProgressIndicator())
                 : Expanded(
                     child: ListView.builder(
                         scrollDirection: Axis.vertical,
                         shrinkWrap: true,
-                        itemCount: _races.length,
+                        itemCount: pastRaces.length,
                         itemBuilder: (context, index) {
                           return Column(
                             children: [
-                              PastRaceContainer(
-                                  raceName: _races[index].raceName,
-                                  round: _races[index].round,
-                                  dayStr: _races[index].dayStr,
-                                  month: _races[index].month,
-                                  winnerName: _races[index].winnerName,
-                                  constructorName:
-                                      _races[index].constructorName,
-                                  place: _races[index].place),
+                              UpcomingRaceContainer(
+                                  raceName: upcomingRaces[index].raceName,
+                                  round: upcomingRaces[index].round,
+                                  dayStr: upcomingRaces[index].dayStr,
+                                  month: upcomingRaces[index].month,
+                                  place: upcomingRaces[index].place),
                               SizedBox(height: 15),
                             ],
                           );
                         }),
-                  )
+                  ))
+            : (isLoadingP
+                ? Center(child: CircularProgressIndicator())
+                : Expanded(
+                    child: ListView.builder(
+                        scrollDirection: Axis.vertical,
+                        shrinkWrap: true,
+                        itemCount: pastRaces.length,
+                        itemBuilder: (context, index) {
+                          return Column(
+                            children: [
+                              PastRaceContainer(
+                                  raceName: pastRaces[index].raceName,
+                                  round: pastRaces[index].round,
+                                  dayStr: pastRaces[index].dayStr,
+                                  month: pastRaces[index].month,
+                                  winnerName: pastRaces[index].winnerName,
+                                  constructorName:
+                                      pastRaces[index].constructorName,
+                                  place: pastRaces[index].place),
+                              SizedBox(height: 15),
+                            ],
+                          );
+                        }),
+                  ))
       ]),
     );
   }

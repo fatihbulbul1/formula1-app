@@ -21,16 +21,16 @@ class MyWidget extends StatelessWidget {
     "DEC"
   ];
   Future getNextRace() async {
-    var response = await http.get(Uri.https("ergast.com", "api/f1/2023.json"));
+    var response = await http.get(Uri.https("ergast.com", "api/f1/2019.json"));
     var jsonData = jsonDecode(response.body);
     var date = jsonData["MRData"]["RaceTable"]["Races"][0]["date"]
-        .replaceFirst("2023", "2024");
+        .replaceFirst("2019", "2024");
     var time = jsonData["MRData"]["RaceTable"]["Races"][0]["time"];
     ;
     var round = jsonData["MRData"]["RaceTable"]["Races"][0]["round"];
     var raceName = jsonData["MRData"]["RaceTable"]["Races"][0]["raceName"];
     String strDate = jsonData["MRData"]["RaceTable"]["Races"][0]["date"]
-        .replaceFirst("2023", "2024");
+        .replaceFirst("2019", "2024");
     var raceDay = strDate.split("-");
 
     DateTime now = DateTime.now();

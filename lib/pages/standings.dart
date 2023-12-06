@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:test/models/constructor_model.dart';
 import 'package:test/models/driver_model.dart';
-import 'package:test/models/race_api.dart';
+import 'package:test/services/race_api.dart';
 import 'package:test/widgets/constructor_card.dart';
 import 'package:test/widgets/driver_card.dart';
 
