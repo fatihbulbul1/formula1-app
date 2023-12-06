@@ -2,7 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:intl/intl.dart';
+import 'package:test/models/race_.dart';
+import 'package:test/models/race_api.dart';
+import 'package:test/widgets/past_race.dart';
 
 class RacingPage extends StatefulWidget {
   RacingPage({super.key});
@@ -14,7 +16,8 @@ class RacingPage extends StatefulWidget {
 class _RacingPageState extends State<RacingPage> {
   int _currentPage = 0;
   List races = [];
-  bool isLoading = false;
+  late List<Race> _races;
+  bool isLoading = true;
   final List months = [
     "-",
     "-",
@@ -33,7 +36,15 @@ class _RacingPageState extends State<RacingPage> {
   @override
   void initState() {
     super.initState();
-    getRaces();
+    getRaces2();
+  }
+
+  Future getRaces2() async {
+    _races = await RaceApi.getRace();
+    setState(() {
+      isLoading = false;
+    });
+    print(_races);
   }
 
   Future getRaces() async {
@@ -87,7 +98,32 @@ class _RacingPageState extends State<RacingPage> {
         SizedBox(
           height: 20,
         ),
-        _currentPage == 0 ? upcomingContainer() : pastContainerListTile()
+        _currentPage == 0
+            ? upcomingContainer()
+            : isLoading
+                ? Center(child: CircularProgressIndicator())
+                : Expanded(
+                    child: ListView.builder(
+                        scrollDirection: Axis.vertical,
+                        shrinkWrap: true,
+                        itemCount: _races.length,
+                        itemBuilder: (context, index) {
+                          return Column(
+                            children: [
+                              PastRaceContainer(
+                                  raceName: _races[index].raceName,
+                                  round: _races[index].round,
+                                  dayStr: _races[index].dayStr,
+                                  month: _races[index].month,
+                                  winnerName: _races[index].winnerName,
+                                  constructorName:
+                                      _races[index].constructorName,
+                                  place: _races[index].place),
+                              SizedBox(height: 15),
+                            ],
+                          );
+                        }),
+                  )
       ]),
     );
   }
@@ -180,9 +216,13 @@ class _RacingPageState extends State<RacingPage> {
         future: getRaces(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
-            return ListView.builder(itemBuilder: (context, index) {
-              return raceContainer1(races[index]);
-            });
+            return ListView.builder(
+                itemCount: races.length,
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    title: Text(races[index][0]),
+                  );
+                });
           } else {
             return Center(
               child: CircularProgressIndicator(),
@@ -196,13 +236,15 @@ class _RacingPageState extends State<RacingPage> {
       child: ListView.builder(
         itemCount: races.length,
         itemBuilder: (context, index) {
-          return Column(
-            children: [
-              race__(races[
-                  index]), // Make sure this function is implemented correctly
-              SizedBox(height: 20),
-            ],
+          return ListTile(
+            title: Text(races[index][0]),
           );
+          // return Column(
+          //   children: [
+          //     race__(races[index]), // Make sure this function is implemented correctly
+          //     SizedBox(height: 20),
+          //   ],
+          // );
         },
       ),
     );
