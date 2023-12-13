@@ -1,9 +1,14 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:test/firebase_options.dart';
 import 'package:test/pages/racing.dart';
 import 'package:test/pages/standings.dart';
 import 'package:test/pages/test.dart';
+import 'package:test/services/firestore.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const MyApp());
 }
 
@@ -34,9 +39,16 @@ TextStyle titleStyle() {
 }
 
 class _HomeState extends State<Home> {
+  static FirestoreService firestoreService = FirestoreService();
   int _currentIndex = 0;
-
-  final List<Widget> _pages = [MyWidget(), const RacingPage(), const StandingsPage()];
+  final TextEditingController authorCon = TextEditingController();
+  final TextEditingController textCon = TextEditingController();
+  final TextEditingController bodyImageCon = TextEditingController();
+  final List<Widget> _pages = [
+    MyWidget(),
+    const RacingPage(),
+    const StandingsPage()
+  ];
   final List<Text> _texts = [
     Text(
       "Home".toUpperCase(),
@@ -49,6 +61,10 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: openTweetBox,
+        child: const Icon(Icons.add),
+      ),
       appBar: AppBar(
         elevation: 0,
         titleSpacing: 25,
@@ -89,23 +105,47 @@ class _HomeState extends State<Home> {
     );
   }
 
-  Padding _body() {
-    return const Padding(
-      padding: EdgeInsets.fromLTRB(25.0, 30.0, 10.0, 0),
-      child: Column(
-        children: [
-          Text(
-            "Name",
-            style: TextStyle(letterSpacing: 2.0, color: Colors.red),
-          ),
-          SizedBox(height: 10),
-          Text(
-            "OMAR7",
-            style: TextStyle(fontSize: 25, color: Colors.blue),
-          )
-        ],
-      ),
-    );
+  void openTweetBox() {
+    showDialog(
+        context: context,
+        builder: (context) => (AlertDialog(
+              content: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text("Author:"),
+                  TextField(
+                    controller: authorCon,
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Text("Text"),
+                  TextField(
+                    controller: textCon,
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Text("Image Url"),
+                  TextField(
+                    controller: bodyImageCon,
+                  )
+                ],
+              ),
+              actions: [
+                ElevatedButton(
+                    onPressed: () {
+                      firestoreService.addTweet(
+                          authorCon.text, textCon.text, bodyImageCon.text);
+                      authorCon.clear();
+                      textCon.clear();
+                      bodyImageCon.clear();
+                      Navigator.pop(context);
+                    },
+                    child: Text("add"))
+              ],
+            )));
   }
 
   BottomNavigationBar Nav() {

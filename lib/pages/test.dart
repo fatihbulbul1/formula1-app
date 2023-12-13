@@ -2,9 +2,42 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:test/services/dbhelper.dart';
+import 'package:test/services/firestore.dart';
 
-class MyWidget extends StatelessWidget {
+class MyWidget extends StatefulWidget {
   MyWidget({super.key});
+
+  @override
+  State<MyWidget> createState() => _MyWidgetState();
+}
+
+class _MyWidgetState extends State<MyWidget> {
+  FirestoreService firestoreService = FirestoreService();
+
+  List<Map<String, dynamic>> _allData = [];
+
+  bool isLoading = true;
+  void refreshData() async {
+    final data = await SQLHelper.getData();
+    setState(() {
+      _allData = data;
+      isLoading = false;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    refreshData();
+  }
+
+  Future<void> _addData(String author, String text, String bodyImageUrl) async {
+    await SQLHelper.createData(author, text, bodyImageUrl);
+    refreshData();
+  }
+
+  var num = 0;
   final List months = [
     "-",
     "-",
@@ -20,6 +53,7 @@ class MyWidget extends StatelessWidget {
     "NOV",
     "DEC"
   ];
+
   Future getNextRace() async {
     var response = await http.get(Uri.https("ergast.com", "api/f1/2019.json"));
     var jsonData = jsonDecode(response.body);
@@ -60,17 +94,15 @@ class MyWidget extends StatelessWidget {
     remaining.add(strHours);
     remaining.add(strMinutes);
     remaining.add(raceName);
-    remaining.add("${"${"Round " +
-        round} | ${raceDay[2]} " +
-        months[int.parse(raceDay[1])]} ${raceDay[0]}");
+    remaining.add(
+        "${"${"Round " + round} | ${raceDay[2]} " + months[int.parse(raceDay[1])]} ${raceDay[0]}");
     return remaining;
   }
 
   @override
   Widget build(BuildContext context) {
     getNextRace();
-    return Container(
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       // RaceNameContainer(),
       // TimerContainer2(),
       Top(),
@@ -89,61 +121,79 @@ class MyWidget extends StatelessWidget {
         color: Colors.white,
         thickness: 1,
       ),
-      Padding(
-        padding: const EdgeInsets.fromLTRB(5, 15, 5, 0),
-        child: Column(
-          children: [
-            tweetContainer(),
-          ],
-        ),
-      )
-    ]));
+      isLoading
+          ? Center(child: CircularProgressIndicator())
+          : Expanded(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(5, 15, 5, 0),
+                child: ListView.builder(
+                  itemCount: _allData.length,
+                  scrollDirection: Axis.vertical,
+                  shrinkWrap: true,
+                  itemBuilder: (context, index) {
+                    return Column(
+                      children: [
+                        tweetContainer(_allData[index]),
+                        SizedBox(
+                          height: 20,
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              ),
+            )
+    ]);
   }
 
-  Container tweetContainer() {
-    return Container(
-      decoration: BoxDecoration(
-          color: const Color.fromARGB(255, 56, 56, 56),
-          border: Border.all(color: const Color.fromARGB(255, 56, 56, 56)),
-          borderRadius: BorderRadius.circular(10)),
-      child: Padding(
-        padding: const EdgeInsets.all(15.0),
-        child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
+  Column tweetContainer(var item) {
+    return Column(
+      children: [
+        Container(
+          decoration: BoxDecoration(
+              color: const Color.fromARGB(255, 56, 56, 56),
+              border: Border.all(color: const Color.fromARGB(255, 56, 56, 56)),
+              borderRadius: BorderRadius.circular(10)),
+          child: Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  twitPicture(),
-                  const SizedBox(
-                    width: 15,
+                  Row(
+                    children: [
+                      twitPicture(),
+                      const SizedBox(
+                        width: 15,
+                      ),
+                      twitHeader(item["author"], item["text"]),
+                    ],
                   ),
-                  twitHeader(),
-                ],
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              Container(
-                child: const Column(children: [
-                  Image(
-                    image: AssetImage("assets/images/img2.png"),
-                    width: 200,
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Container(
+                    child: const Column(children: [
+                      Image(
+                        image: AssetImage("assets/images/img2.png"),
+                        width: 200,
+                      )
+                    ]),
                   )
                 ]),
-              )
-            ]),
-      ),
+          ),
+        ),
+      ],
     );
   }
 
-  Container twitHeader() {
+  Container twitHeader(String author, String text) {
     return Container(
-      child: const Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text(
-              "Formula 1",
+              author,
               style:
                   TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
             ),
@@ -160,7 +210,7 @@ class MyWidget extends StatelessWidget {
           height: 12,
         ),
         Text(
-          "IT’S RACE WEEK IN VEGAS!!!",
+          text,
           style: TextStyle(color: Colors.white),
         ),
       ]),
@@ -291,7 +341,8 @@ class MyWidget extends StatelessWidget {
         });
   }
 
-  TextStyle timeTextStyle() => const TextStyle(color: Colors.white, fontSize: 13);
+  TextStyle timeTextStyle() =>
+      const TextStyle(color: Colors.white, fontSize: 13);
 
   TextStyle numberTextStyle() {
     return const TextStyle(
