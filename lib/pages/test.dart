@@ -26,6 +26,11 @@ class _MyWidgetState extends State<MyWidget> {
     });
   }
 
+  void deleteData() async {
+    await SQLHelper.deleteData();
+    refreshData();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -106,17 +111,17 @@ class _MyWidgetState extends State<MyWidget> {
       // RaceNameContainer(),
       // TimerContainer2(),
       Top(),
-      const SizedBox(
+      SizedBox(
         height: 20,
       ),
       Text(
         "Latest News".toUpperCase(),
-        style: const TextStyle(color: Colors.white, fontSize: 20),
+        style: TextStyle(color: Colors.white, fontSize: 20),
       ),
-      const SizedBox(
+      SizedBox(
         height: 10,
       ),
-      const Divider(
+      Divider(
         height: 0,
         color: Colors.white,
         thickness: 1,
@@ -125,7 +130,7 @@ class _MyWidgetState extends State<MyWidget> {
           ? Center(child: CircularProgressIndicator())
           : Expanded(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(5, 15, 5, 0),
+                padding: EdgeInsets.fromLTRB(5, 15, 5, 0),
                 child: ListView.builder(
                   itemCount: _allData.length,
                   scrollDirection: Axis.vertical,
@@ -147,37 +152,49 @@ class _MyWidgetState extends State<MyWidget> {
   }
 
   Column tweetContainer(var item) {
+    DateTime time = DateTime.parse(item["date"]);
+    String formattedDate = DateFormat('dd/MM/yyyy kk:mm').format(time);
     return Column(
       children: [
         Container(
           decoration: BoxDecoration(
-              color: const Color.fromARGB(255, 56, 56, 56),
-              border: Border.all(color: const Color.fromARGB(255, 56, 56, 56)),
+              color: Color.fromARGB(255, 56, 56, 56),
+              border: Border.all(color: Color.fromARGB(255, 56, 56, 56)),
               borderRadius: BorderRadius.circular(10)),
           child: Padding(
-            padding: const EdgeInsets.all(15.0),
+            padding: EdgeInsets.all(15.0),
             child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
                       twitPicture(),
-                      const SizedBox(
+                      SizedBox(
                         width: 15,
                       ),
                       twitHeader(item["author"], item["text"]),
                     ],
                   ),
-                  const SizedBox(
+                  item["bodyImageUrl"] != ""
+                      ? Column(
+                          children: [
+                            SizedBox(
+                              height: 20,
+                            ),
+                            Column(children: [
+                              Image.network(item["bodyImageUrl"]),
+                            ]),
+                          ],
+                        )
+                      : SizedBox(),
+                  SizedBox(
                     height: 20,
                   ),
-                  Container(
-                    child: const Column(children: [
-                      Image(
-                        image: AssetImage("assets/images/img2.png"),
-                        width: 200,
-                      )
-                    ]),
+                  Text(
+                    formattedDate,
+                    textAlign: TextAlign.left,
+                    style: TextStyle(color: Color.fromARGB(204, 154, 154, 154)),
                   )
                 ]),
           ),
@@ -222,7 +239,7 @@ class _MyWidgetState extends State<MyWidget> {
       decoration: BoxDecoration(
           border: Border.all(color: Colors.white),
           borderRadius: BorderRadius.circular(4)),
-      child: const Image(
+      child: Image(
         image: AssetImage("assets/images/img.png"),
         height: 50,
         fit: BoxFit.fill,
@@ -235,7 +252,7 @@ class _MyWidgetState extends State<MyWidget> {
         future: getNextRace(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const CircularProgressIndicator();
+            return CircularProgressIndicator();
           } else if (snapshot.hasError) {
             return Text("Error: ${snapshot.error}");
           } else {
@@ -246,40 +263,40 @@ class _MyWidgetState extends State<MyWidget> {
                   children: [
                     Text(
                       "${snapshot.data[4]}",
-                      style: const TextStyle(color: Colors.white, fontSize: 20),
+                      style: TextStyle(color: Colors.white, fontSize: 20),
                     ),
-                    const SizedBox(
+                    SizedBox(
                       height: 10,
                     ),
                   ],
                 ),
                 Container(
-                  padding: const EdgeInsets.fromLTRB(25, 0, 25, 0),
+                  padding: EdgeInsets.fromLTRB(25, 0, 25, 0),
                   decoration: BoxDecoration(
-                      color: const Color.fromARGB(255, 0, 100, 66),
+                      color: Color.fromARGB(255, 0, 100, 66),
                       border: Border.all(
                           style: BorderStyle.solid,
-                          color: const Color.fromARGB(0, 255, 255, 255)),
+                          color: Color.fromARGB(0, 255, 255, 255)),
                       borderRadius: BorderRadius.circular(10)),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const SizedBox(height: 20),
+                      SizedBox(height: 20),
                       Text(
                         "${snapshot.data[3]}".toUpperCase(),
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: Colors.white,
                           letterSpacing: 0.5,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      const Divider(
+                      Divider(
                         height: 15,
                         color: Colors.black,
                         thickness: 0.4,
                       ),
-                      const SizedBox(height: 15),
+                      SizedBox(height: 15),
                       IntrinsicHeight(
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -296,7 +313,7 @@ class _MyWidgetState extends State<MyWidget> {
                                 )
                               ],
                             ),
-                            const VerticalDivider(
+                            VerticalDivider(
                               color: Colors.black,
                             ),
                             Column(
@@ -311,7 +328,7 @@ class _MyWidgetState extends State<MyWidget> {
                                 )
                               ],
                             ),
-                            const VerticalDivider(
+                            VerticalDivider(
                               color: Colors.black,
                             ),
                             Column(
@@ -329,7 +346,7 @@ class _MyWidgetState extends State<MyWidget> {
                           ],
                         ),
                       ),
-                      const SizedBox(
+                      SizedBox(
                         height: 20,
                       )
                     ],
@@ -341,11 +358,10 @@ class _MyWidgetState extends State<MyWidget> {
         });
   }
 
-  TextStyle timeTextStyle() =>
-      const TextStyle(color: Colors.white, fontSize: 13);
+  TextStyle timeTextStyle() => TextStyle(color: Colors.white, fontSize: 13);
 
   TextStyle numberTextStyle() {
-    return const TextStyle(
+    return TextStyle(
         color: Colors.white, fontSize: 33, fontWeight: FontWeight.bold);
   }
 }

@@ -24,11 +24,27 @@ class SQLHelper {
   static Future<int> createData(
       String author, String text, String bodyImageUrl) async {
     final db = await SQLHelper.db();
-
-    final data = {'author': author, 'text': text, 'bodyImageUrl': bodyImageUrl};
+    String _author;
+    if (author == "") {
+      _author = "Formula 1";
+    } else {
+      _author = author;
+    }
+    final data = {
+      'author': _author,
+      'text': text,
+      'bodyImageUrl': bodyImageUrl
+    };
     final id = await db.insert('tweets', data,
         conflictAlgorithm: sql.ConflictAlgorithm.replace);
     return id;
+  }
+
+  static Future<void> deleteData() async {
+    final db = await SQLHelper.db();
+    try {
+      await db.rawDelete("DELETE FROM tweets");
+    } catch (e) {}
   }
 
   static Future<List<Map<String, dynamic>>> getData() async {

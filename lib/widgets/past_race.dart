@@ -89,14 +89,16 @@ class PastRaceContainer extends StatelessWidget {
                 )
               ]),
             ),
-            SizedBox(
-              height: 12,
+            Divider(
+              color: Colors.white,
             ),
             Text(
               "Winner: $winnerName - $constructorName",
               style: TextStyle(color: Colors.red),
             ),
             ElevatedButton(
+                style: ButtonStyle(
+                    backgroundColor: MaterialStatePropertyAll(Colors.red)),
                 onPressed: () {
                   Navigator.push(
                     context,
@@ -107,7 +109,10 @@ class PastRaceContainer extends StatelessWidget {
                             )),
                   );
                 },
-                child: Text("See Results"))
+                child: Text(
+                  "See Results",
+                  style: TextStyle(color: Colors.black),
+                ))
           ],
         ),
       ),
