@@ -2,9 +2,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:test/firebase_options.dart';
 import 'package:test/pages/racing.dart';
+import 'package:test/pages/share_tweet.dart';
 import 'package:test/pages/standings.dart';
 import 'package:test/pages/test.dart';
-import 'package:test/services/firestore.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -39,7 +39,6 @@ TextStyle titleStyle() {
 }
 
 class _HomeState extends State<Home> {
-  static FirestoreService firestoreService = FirestoreService();
   int _currentIndex = 0;
   final TextEditingController authorCon = TextEditingController();
   final TextEditingController textCon = TextEditingController();
@@ -47,7 +46,8 @@ class _HomeState extends State<Home> {
   final List<Widget> _pages = [
     MyWidget(),
     const RacingPage(),
-    const StandingsPage()
+    const StandingsPage(),
+    ShareTweet(),
   ];
   final List<Text> _texts = [
     Text(
@@ -56,15 +56,12 @@ class _HomeState extends State<Home> {
     ),
     Text("Racing".toUpperCase(), style: titleStyle()),
     Text("Standings".toUpperCase(), style: titleStyle()),
+    Text("Post a tweet".toUpperCase(), style: titleStyle()),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: openTweetBox,
-        child: const Icon(Icons.add),
-      ),
       appBar: AppBar(
         elevation: 0,
         titleSpacing: 25,
@@ -98,7 +95,9 @@ class _HomeState extends State<Home> {
               label: "Racing",
             ),
             NavigationDestination(
-                icon: Icon(Icons.leaderboard), label: "Standings")
+                icon: Icon(Icons.leaderboard), label: "Standings"),
+            NavigationDestination(
+                icon: Icon(Icons.new_label_sharp), label: "Post Tweet")
           ],
         ),
       ),
@@ -133,18 +132,7 @@ class _HomeState extends State<Home> {
                   )
                 ],
               ),
-              actions: [
-                ElevatedButton(
-                    onPressed: () {
-                      firestoreService.addTweet(
-                          authorCon.text, textCon.text, bodyImageCon.text);
-                      authorCon.clear();
-                      textCon.clear();
-                      bodyImageCon.clear();
-                      Navigator.pop(context);
-                    },
-                    child: Text("add"))
-              ],
+              actions: [ElevatedButton(onPressed: () {}, child: Text("add"))],
             )));
   }
 
