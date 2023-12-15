@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:test/pages/r.dart';
 
 class PastRaceContainer extends StatelessWidget {
   final String raceName;
@@ -9,7 +10,7 @@ class PastRaceContainer extends StatelessWidget {
   final String constructorName;
   final String place;
 
-  const PastRaceContainer({
+  PastRaceContainer({
     super.key,
     required this.raceName,
     required this.round,
@@ -23,11 +24,11 @@ class PastRaceContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     return IntrinsicHeight(
       child: Container(
-        padding: const EdgeInsets.all(20),
+        padding: EdgeInsets.all(20),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: const Color.fromARGB(255, 46, 46, 46)),
-            color: const Color.fromARGB(255, 46, 46, 46)),
+            border: Border.all(color: Color.fromARGB(255, 46, 46, 46)),
+            color: Color.fromARGB(255, 46, 46, 46)),
         child: Column(
           children: [
             IntrinsicHeight(
@@ -40,22 +41,22 @@ class PastRaceContainer extends StatelessWidget {
                       children: [
                         Text(
                           dayStr,
-                          style: const TextStyle(
+                          style: TextStyle(
                               color: Colors.white, fontWeight: FontWeight.bold),
                         ),
-                        const SizedBox(
+                        SizedBox(
                           height: 8,
                         ),
                         Container(
                           decoration: monthDecoration(),
-                          padding: const EdgeInsets.all(5),
+                          padding: EdgeInsets.all(5),
                           child: Text(
                             month,
                           ),
                         )
                       ]),
                 ),
-                const VerticalDivider(
+                VerticalDivider(
                   color: Colors.white,
                   width: 50,
                 ),
@@ -64,37 +65,49 @@ class PastRaceContainer extends StatelessWidget {
                   children: [
                     Text(
                       "Round $round",
-                      style: const TextStyle(
-                          color: Color.fromARGB(255, 211, 211, 211)),
+                      style:
+                          TextStyle(color: Color.fromARGB(255, 211, 211, 211)),
                     ),
-                    const SizedBox(
+                    SizedBox(
                       height: 10,
                     ),
                     Text(
                       (place.replaceFirst(place[0], place[0].toUpperCase()))
                           .replaceAll("_", " "),
-                      style: const TextStyle(
+                      style: TextStyle(
                           color: Colors.white, fontWeight: FontWeight.bold),
                     ),
-                    const SizedBox(
+                    SizedBox(
                       height: 10,
                     ),
                     Text(
                       raceName,
-                      style: const TextStyle(
-                          color: Color.fromARGB(255, 211, 211, 211)),
+                      style:
+                          TextStyle(color: Color.fromARGB(255, 211, 211, 211)),
                     )
                   ],
                 )
               ]),
             ),
-            const SizedBox(
+            SizedBox(
               height: 12,
             ),
             Text(
               "Winner: $winnerName - $constructorName",
-              style: const TextStyle(color: Colors.red),
-            )
+              style: TextStyle(color: Colors.red),
+            ),
+            ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => R(
+                              round: round,
+                              raceName: raceName,
+                            )),
+                  );
+                },
+                child: Text("See Results"))
           ],
         ),
       ),
